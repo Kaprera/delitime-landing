@@ -31,12 +31,15 @@ Edit the files and reload. That is the whole loop.
 
 ## Before you deploy
 
-**Point "Sign in" at the console.** Every `https://app.delitime.org` in
+**Point "Sign in" at the console.** Every `https://portal.delitime.org` in
 `index.html` is the Render deployment's address: three links — header, hero and
-footer — plus one mention in the comment at the top of the file.
+footer — plus one mention in the comment at the top of the file. `netlify.toml`
+also redirects `/login` and `/signin` on this domain to the same place, so a
+typed or bookmarked login URL lands on the portal instead of a 404; change it
+there too.
 
 ```bash
-grep -n "app.delitime.org" index.html
+grep -n "portal.delitime.org" index.html netlify.toml
 ```
 
 **Check the contact details.** The demo address (`demo@delitime.org`), the

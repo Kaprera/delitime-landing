@@ -58,3 +58,23 @@
   for = "/script.js"
   [headers.values]
     Cache-Control = "public, max-age=86400, must-revalidate"
+
+# -----------------------------------------------------------------------------
+# Sign-in redirects.
+#
+# The console lives on its own domain; this site only advertises it. Anyone who
+# types or bookmarks the login path on the landing domain is sent straight to
+# the portal rather than a 404. 301 because the destination is permanent — the
+# landing site will never serve a login page of its own.
+# -----------------------------------------------------------------------------
+[[redirects]]
+  from = "/login"
+  to = "https://portal.delitime.org/login"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/signin"
+  to = "https://portal.delitime.org/login"
+  status = 301
+  force = true
