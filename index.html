@@ -1,0 +1,543 @@
+<!doctype html>
+<!--
+  DeliTime — public landing page.
+
+  Plain HTML, CSS and JS: this is deployed to Netlify as static files, while
+  the console it advertises is a Next.js app deployed to Render. The two share
+  no build, no runtime and no session — the only thing that crosses between
+  them is the "Sign in" link, which points at the console's own domain.
+
+  Because there is no session here, the call to action is always "Sign in"
+  rather than the console-aware button the app used to render at "/".
+
+  THE ONE THING TO CHANGE ON DEPLOY: every `https://app.delitime.org` below is
+  the console's address on Render. Search for it and set it to yours.
+-->
+<html lang="en" data-theme="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DeliTime · Delivery operations, end to end</title>
+<meta name="description" content="One compact console for a delivery business: WhatsApp order intake, driver assignment, delivery status, commissions, and a PDF report for every order.">
+<meta name="theme-color" content="#14738c">
+<link rel="canonical" href="https://delitime.org/">
+<link rel="icon" href="favicon.ico" sizes="any">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DeliTime">
+<meta property="og:url" content="https://delitime.org/">
+<meta property="og:title" content="DeliTime · Delivery operations, end to end">
+<meta property="og:description" content="Every order, from WhatsApp to the doorstep. Intake, driver assignment, live status, commissions, and a report for every order.">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preload" href="styles.css" as="style">
+<link rel="stylesheet" href="styles.css">
+
+<!--
+  Theme, before first paint.
+
+  The console renders `data-theme` server-side from a cookie, which a static
+  host cannot do. This is the other way round: the stored preference is read
+  synchronously here, in <head>, so the attribute is already correct when the
+  first pixel is drawn and a dark visitor never sees a flash of white. It has
+  to stay inline for that reason — an external file would load too late.
+  Its hash is pinned in netlify.toml's Content-Security-Policy.
+-->
+<script>
+  try {
+    var t = localStorage.getItem("theme");
+    if (t === "light" || t === "dark" || t === "system") {
+      document.documentElement.setAttribute("data-theme", t);
+    }
+  } catch (e) {
+    /* Private mode, or storage blocked: "system" in the markup already wins. */
+  }
+</script>
+</head>
+<body>
+
+<!--
+  Icon sprite — Lucide (ISC), the same icon set the console uses, inlined so
+  the page makes no network request for a script or a font to draw them.
+  `fill`/`stroke` are inherited properties, so the sizes and colours are set
+  on each <svg class="icon"> that references a symbol.
+-->
+<svg class="icon-sprite" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-message-circle" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+    <symbol id="i-user-check" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></symbol>
+    <symbol id="i-map-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 17.5v-11"/></symbol>
+    <symbol id="i-bar-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></symbol>
+    <symbol id="i-shield-check" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-file-text" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92"/></symbol>
+    <symbol id="i-monitor" viewBox="0 0 24 24"><rect width="20" height="14" x="2" y="3" rx="2"/><line x1="8" x2="16" y1="21" y2="21"/><line x1="12" x2="12" y1="17" y2="21"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9"/></symbol>
+  </defs>
+</svg>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">DT</span>
+      <span class="brand__name">DeliTime</span>
+    </a>
+
+    <nav class="nav" aria-label="Primary">
+      <a href="#flows">How it works</a>
+      <a href="#features">What it does</a>
+    </nav>
+
+    <div class="site-header__actions">
+      <div class="theme-toggle" role="group" aria-label="Color theme">
+        <button class="theme-toggle__btn" type="button" value="system" title="System theme" aria-label="System theme">
+          <svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-monitor"/></svg>
+        </button>
+        <button class="theme-toggle__btn" type="button" value="light" title="Light theme" aria-label="Light theme">
+          <svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-sun"/></svg>
+        </button>
+        <button class="theme-toggle__btn" type="button" value="dark" title="Dark theme" aria-label="Dark theme">
+          <svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-moon"/></svg>
+        </button>
+      </div>
+
+      <a class="signin" href="https://app.delitime.org/login">Sign in</a>
+      <a class="btn btn--sm btn--primary" href="mailto:demo@delitime.org?subject=DeliTime%20demo%20request&amp;body=Hello%20DeliTime%20team%2C%0A%0AWe%20would%20like%20a%20demo.%20Here%20is%20how%20our%20deliveries%20run%20today%3A%0A%0ACompany%3A%0AOrders%20per%20day%3A%0ADrivers%3A%0ABest%20time%20to%20talk%3A%0A">Request a demo</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="wrap animate-rise">
+      <div class="hero__copy">
+        <p class="hero__eyebrow">Delivery operations console</p>
+        <h1 class="hero__title">Every order, from WhatsApp to the <em>doorstep</em>.</h1>
+        <p class="hero__lede">
+          DeliTime is one compact console for a delivery business: order intake,
+          driver assignment, live status, commissions, and a report for every
+          order — with each account&rsquo;s data walled off from the next.
+        </p>
+
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="mailto:demo@delitime.org?subject=DeliTime%20demo%20request&amp;body=Hello%20DeliTime%20team%2C%0A%0AWe%20would%20like%20a%20demo.%20Here%20is%20how%20our%20deliveries%20run%20today%3A%0A%0ACompany%3A%0AOrders%20per%20day%3A%0ADrivers%3A%0ABest%20time%20to%20talk%3A%0A">
+            Request a demo
+            <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+          </a>
+          <a class="btn btn--secondary" href="https://app.delitime.org/login">Sign in</a>
+        </div>
+
+        <ul class="hero__points">
+          <li><svg class="icon ink-emerald" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Set up in an afternoon</li>
+          <li><svg class="icon ink-blue" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Works on a driver&rsquo;s phone</li>
+          <li><svg class="icon ink-violet" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Light and dark</li>
+        </ul>
+      </div>
+
+      <!-- The orders queue — the screen an operator lives in. -->
+      <div class="mock" aria-hidden="true">
+        <div class="mock__bar">
+          <span class="mock__dots"><span></span><span></span><span></span></span>
+          <span class="mock__url">delitime.org/orders</span>
+        </div>
+        <div class="mock__body">
+          <div class="mock__head">
+            <p class="mock__title">Orders</p>
+            <span class="mock__count">128 today</span>
+            <span class="mock__chips">
+              <span class="mock__chip">All</span>
+              <span class="mock__chip mock__chip--on">Open</span>
+              <span class="mock__chip">Mine</span>
+            </span>
+          </div>
+
+          <div class="queue">
+            <div class="queue__head">
+              <span class="queue__id">Order</span>
+              <span class="queue__area">Drop-off</span>
+              <span class="queue__driver">Driver</span>
+              <span class="queue__status">Status</span>
+              <span class="queue__total">Total</span>
+            </div>
+            <div class="queue__row">
+              <span class="queue__id numeric">#1042</span>
+              <span class="queue__area">Achrafieh · Beirut</span>
+              <span class="queue__driver">Unassigned</span>
+              <span class="queue__status"><span class="badge tone-blue"><span class="badge__dot"></span>New</span></span>
+              <span class="queue__total numeric">$18.00</span>
+            </div>
+            <div class="queue__row">
+              <span class="queue__id numeric">#1041</span>
+              <span class="queue__area">Jounieh</span>
+              <span class="queue__driver">Karim H.</span>
+              <span class="queue__status"><span class="badge tone-indigo"><span class="badge__dot"></span>Assigned</span></span>
+              <span class="queue__total numeric">$24.50</span>
+            </div>
+            <div class="queue__row">
+              <span class="queue__id numeric">#1039</span>
+              <span class="queue__area">Hamra · Beirut</span>
+              <span class="queue__driver">Nour A.</span>
+              <span class="queue__status"><span class="badge tone-amber"><span class="badge__dot"></span>In progress</span></span>
+              <span class="queue__total numeric">$12.00</span>
+            </div>
+            <div class="queue__row">
+              <span class="queue__id numeric">#1036</span>
+              <span class="queue__area">Zahlé</span>
+              <span class="queue__driver">Rami S.</span>
+              <span class="queue__status"><span class="badge tone-green"><span class="badge__dot"></span>Complete</span></span>
+              <span class="queue__total numeric">$31.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The order lifecycle, in the console's own status colours -->
+  <section class="lifecycle">
+    <div class="wrap">
+      <p class="eyebrow">One order, every state it can reach</p>
+      <ul class="lifecycle__list">
+        <li><span class="badge tone-blue"><span class="badge__dot"></span>New</span></li>
+        <li><span class="lifecycle__sep" aria-hidden="true">·</span><span class="badge tone-indigo"><span class="badge__dot"></span>Assigned</span></li>
+        <li><span class="lifecycle__sep" aria-hidden="true">·</span><span class="badge tone-amber"><span class="badge__dot"></span>In progress</span></li>
+        <li><span class="lifecycle__sep" aria-hidden="true">·</span><span class="badge tone-green"><span class="badge__dot"></span>Complete</span></li>
+        <li><span class="lifecycle__sep" aria-hidden="true">·</span><span class="badge tone-red"><span class="badge__dot"></span>Canceled</span></li>
+        <li><span class="lifecycle__sep" aria-hidden="true">·</span><span class="badge tone-orange"><span class="badge__dot"></span>Refund</span></li>
+        <li><span class="lifecycle__sep" aria-hidden="true">·</span><span class="badge tone-gray"><span class="badge__dot"></span>No response ×1</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Flows — each step beside the screen it happens on -->
+  <section id="flows" class="flows wrap">
+    <h2 class="section-title">How an order moves</h2>
+    <p class="section-lede">
+      Three flows cover the day: intake, dispatch, and close out. Here is what
+      each one actually looks like.
+    </p>
+
+    <div class="flows__list">
+      <!-- 1 · Intake -->
+      <article class="flow">
+        <div class="flow__copy">
+          <div class="flow__step">
+            <span class="chip chip--round tone-emerald">1</span>
+            <p class="eyebrow">Intake</p>
+          </div>
+          <h3 class="flow__title">Take the order</h3>
+          <p class="flow__body">
+            An operator writes it down, or sends the client a form link over
+            WhatsApp and lets them fill it in. Either way it arrives priced and
+            queued as New — no retyping from a chat thread.
+          </p>
+          <ul class="flow__points">
+            <li><svg class="icon ink-emerald" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Shareable form link</li>
+            <li><svg class="icon ink-emerald" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Arrives as a real order</li>
+            <li><svg class="icon ink-emerald" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>No app for the client</li>
+          </ul>
+        </div>
+
+        <div class="flow__screen">
+          <div class="mock" aria-hidden="true">
+            <div class="mock__bar">
+              <span class="mock__dots"><span></span><span></span><span></span></span>
+              <span class="mock__url">delitime.org/f/a7c2 · shared on WhatsApp</span>
+            </div>
+            <div class="mock__body">
+              <div class="mock__head">
+                <span class="chip chip--sm tone-emerald">
+                  <svg class="icon" width="14" height="14"><use href="#i-message-circle"/></svg>
+                </span>
+                <p class="mock__title">New delivery request</p>
+                <span class="mock__step">Step 1 of 2</span>
+              </div>
+
+              <div class="fields">
+                <div><p class="field__label">Customer</p><div class="field__value">Rana K.</div></div>
+                <div><p class="field__label">Phone</p><div class="field__value">+961 3 000 000</div></div>
+                <div><p class="field__label">Drop-off</p><div class="field__value">Achrafieh, Beirut</div></div>
+                <div><p class="field__label">Package</p><div class="field__value">2 boxes · fragile</div></div>
+              </div>
+
+              <div class="mock__actions">
+                <span class="mock__btn mock__btn--send">
+                  Send order
+                  <svg class="icon" width="12" height="12"><use href="#i-arrow-right"/></svg>
+                </span>
+                <span class="badge tone-blue"><span class="badge__dot"></span>Lands as New</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 2 · Dispatch -->
+      <article class="flow">
+        <div class="flow__copy">
+          <div class="flow__step">
+            <span class="chip chip--round tone-blue">2</span>
+            <p class="eyebrow">Dispatch</p>
+          </div>
+          <h3 class="flow__title">Assign a driver</h3>
+          <p class="flow__body">
+            Pick the driver from your account with zones, availability, and
+            distance from their base in view. They get the details on WhatsApp
+            and see the job the moment they sign in.
+          </p>
+          <ul class="flow__points">
+            <li><svg class="icon ink-blue" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Zone and distance aware</li>
+            <li><svg class="icon ink-blue" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Reassign any time</li>
+            <li><svg class="icon ink-blue" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Driver notified on WhatsApp</li>
+          </ul>
+        </div>
+
+        <div class="flow__screen">
+          <div class="mock" aria-hidden="true">
+            <div class="mock__bar">
+              <span class="mock__dots"><span></span><span></span><span></span></span>
+              <span class="mock__url">delitime.org/orders/1042</span>
+            </div>
+            <div class="mock__body">
+              <div class="mock__head">
+                <p class="mock__title">Assign driver</p>
+                <span class="mock__ref numeric">#1042</span>
+                <span class="mock__push"><span class="badge tone-blue"><span class="badge__dot"></span>New</span></span>
+              </div>
+
+              <div class="drivers">
+                <div class="driver driver--picked">
+                  <span class="driver__avatar">KH</span>
+                  <span class="driver__who">
+                    <span class="driver__name">Karim H.</span>
+                    <span class="driver__meta">Beirut · Metn · 1.2 km</span>
+                  </span>
+                  <span class="badge tone-green"><span class="badge__dot"></span>Available</span>
+                </div>
+                <div class="driver">
+                  <span class="driver__avatar">NA</span>
+                  <span class="driver__who">
+                    <span class="driver__name">Nour A.</span>
+                    <span class="driver__meta">Beirut · 3.8 km</span>
+                  </span>
+                  <span class="badge tone-green"><span class="badge__dot"></span>Available</span>
+                </div>
+                <div class="driver">
+                  <span class="driver__avatar">RS</span>
+                  <span class="driver__who">
+                    <span class="driver__name">Rami S.</span>
+                    <span class="driver__meta">Bekaa · 41 km</span>
+                  </span>
+                  <span class="badge tone-amber"><span class="badge__dot"></span>Busy</span>
+                </div>
+              </div>
+
+              <div class="mock__actions">
+                <span class="mock__btn mock__btn--assign">Assign Karim H.</span>
+                <span class="mock__note">
+                  <svg class="icon" width="12" height="12"><use href="#i-message-circle"/></svg>
+                  Notified
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- 3 · Close out -->
+      <article class="flow">
+        <div class="flow__copy">
+          <div class="flow__step">
+            <span class="chip chip--round tone-violet">3</span>
+            <p class="eyebrow">Close out</p>
+          </div>
+          <h3 class="flow__title">Settle and report</h3>
+          <p class="flow__body">
+            Status moves to complete, commission freezes against the price the
+            order was priced at, and a PDF report is there for the order — all
+            of it feeding the dashboard and the month&rsquo;s finance view.
+          </p>
+          <ul class="flow__points">
+            <li><svg class="icon ink-violet" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>5% account · 1.5% platform</li>
+            <li><svg class="icon ink-violet" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Per-order PDF report</li>
+            <li><svg class="icon ink-violet" width="14" height="14" aria-hidden="true"><use href="#i-check"/></svg>Monthly finance view</li>
+          </ul>
+        </div>
+
+        <div class="flow__screen">
+          <div class="mock" aria-hidden="true">
+            <div class="mock__bar">
+              <span class="mock__dots"><span></span><span></span><span></span></span>
+              <span class="mock__url">delitime.org/dashboard</span>
+            </div>
+            <div class="mock__body">
+              <div class="stats">
+                <div class="stat tone-blue">
+                  <p class="stat__label">Orders</p>
+                  <p class="stat__value numeric">128</p>
+                </div>
+                <div class="stat tone-emerald">
+                  <p class="stat__label">Revenue</p>
+                  <p class="stat__value numeric">$2,940</p>
+                </div>
+                <div class="stat tone-violet">
+                  <p class="stat__label">Commission</p>
+                  <p class="stat__value numeric">$190</p>
+                </div>
+              </div>
+
+              <div class="panel">
+                <p class="panel__label">Last 7 days</p>
+                <div class="chart">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span class="is-peak"></span>
+                  <span></span>
+                </div>
+              </div>
+
+              <div class="file">
+                <span class="chip chip--sm tone-red">
+                  <svg class="icon" width="14" height="14"><use href="#i-file-text"/></svg>
+                </span>
+                <span class="file__name">order-1042-report.pdf</span>
+                <span class="file__tag">PDF</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- What it does -->
+  <section id="features" class="features">
+    <div class="wrap">
+      <h2 class="section-title">What it does</h2>
+
+      <div class="features__grid stagger">
+        <div class="feature">
+          <span class="chip tone-emerald"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-message-circle"/></svg></span>
+          <h3 class="feature__title">WhatsApp order intake</h3>
+          <p class="feature__body">Send the client a form link over WhatsApp. What they fill in arrives as a complete order, already in the queue.</p>
+        </div>
+
+        <div class="feature">
+          <span class="chip tone-blue"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-user-check"/></svg></span>
+          <h3 class="feature__title">Driver assignment</h3>
+          <p class="feature__body">Operators pick the driver, with zones, availability, and distance in view. Reassign whenever the day changes.</p>
+        </div>
+
+        <div class="feature">
+          <span class="chip tone-amber"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-map-pin"/></svg></span>
+          <h3 class="feature__title">Delivery status</h3>
+          <p class="feature__body">New, assigned, in progress, complete — alongside cancels, refunds, and no-response passes, on one timeline.</p>
+        </div>
+
+        <div class="feature">
+          <span class="chip tone-violet"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-receipt"/></svg></span>
+          <h3 class="feature__title">Commissions and subscriptions</h3>
+          <p class="feature__body">5% to the account, 1.5% to the platform, frozen against the price the order was priced at. Monthly subscription status per account.</p>
+        </div>
+
+        <div class="feature">
+          <span class="chip tone-teal"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-bar-chart"/></svg></span>
+          <h3 class="feature__title">Dashboards and PDF reports</h3>
+          <p class="feature__body">Volume, revenue, and driver performance, filtered the way you work — plus a PDF report for every single order.</p>
+        </div>
+
+        <div class="feature">
+          <span class="chip tone-indigo"><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-shield-check"/></svg></span>
+          <h3 class="feature__title">Roles and account isolation</h3>
+          <p class="feature__body">Sysadmin, superadmin, admin, operator, driver. Enforced in PostgreSQL with row level security, not just in the UI.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing call to action -->
+  <section class="closing wrap">
+    <div class="closing__panel">
+      <h2 class="closing__title">See it with your own orders.</h2>
+      <p class="closing__lede">
+        Tell us how your deliveries run today and we&rsquo;ll walk you through
+        intake, assignment, and the finance view on a demo account.
+      </p>
+      <div class="closing__actions">
+        <a class="btn btn--white" href="mailto:demo@delitime.org?subject=DeliTime%20demo%20request&amp;body=Hello%20DeliTime%20team%2C%0A%0AWe%20would%20like%20a%20demo.%20Here%20is%20how%20our%20deliveries%20run%20today%3A%0A%0ACompany%3A%0AOrders%20per%20day%3A%0ADrivers%3A%0ABest%20time%20to%20talk%3A%0A">Request a demo</a>
+        <a class="btn btn--outline-white" href="tel:+9613816405">
+          <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#i-phone"/></svg>
+          +961 3816405
+        </a>
+      </div>
+      <p class="closing__fineprint">Demo accounts are capped at 3 orders, 1 operator, and 1 driver.</p>
+    </div>
+  </section>
+</main>
+
+<!-- Full-width footer: the band spans the viewport, and so does its grid. -->
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="site-footer__grid">
+      <div class="site-footer__about">
+        <div class="brand">
+          <span class="brand__mark" aria-hidden="true">DT</span>
+          <span class="brand__name">DeliTime</span>
+        </div>
+        <p>
+          One compact console for a delivery business — intake, assignment,
+          status, commissions, and a report for every order.
+        </p>
+      </div>
+
+      <div>
+        <h2>Product</h2>
+        <ul class="site-footer__links">
+          <li><a href="#flows">How it works</a></li>
+          <li><a href="#features">What it does</a></li>
+          <li><a href="https://app.delitime.org/login">Sign in</a></li>
+          <li><a href="mailto:demo@delitime.org?subject=DeliTime%20demo%20request&amp;body=Hello%20DeliTime%20team%2C%0A%0AWe%20would%20like%20a%20demo.%20Here%20is%20how%20our%20deliveries%20run%20today%3A%0A%0ACompany%3A%0AOrders%20per%20day%3A%0ADrivers%3A%0ABest%20time%20to%20talk%3A%0A">Request a demo</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h2>Contact</h2>
+        <ul class="site-footer__links">
+          <li><a href="https://delitime.org"><svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-globe"/></svg>delitime.org</a></li>
+          <li><a href="mailto:demo@delitime.org?subject=DeliTime%20demo%20request&amp;body=Hello%20DeliTime%20team%2C%0A%0AWe%20would%20like%20a%20demo.%20Here%20is%20how%20our%20deliveries%20run%20today%3A%0A%0ACompany%3A%0AOrders%20per%20day%3A%0ADrivers%3A%0ABest%20time%20to%20talk%3A%0A"><svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-mail"/></svg>demo@delitime.org</a></li>
+          <li><a href="tel:+9613816405"><svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-phone"/></svg>+961 3816405</a></li>
+        </ul>
+      </div>
+
+      <div class="site-footer__start">
+        <h2>Get started</h2>
+        <p>Bring a week of your own orders and we&rsquo;ll set them up on a demo account.</p>
+        <a class="btn btn--white" href="mailto:demo@delitime.org?subject=DeliTime%20demo%20request&amp;body=Hello%20DeliTime%20team%2C%0A%0AWe%20would%20like%20a%20demo.%20Here%20is%20how%20our%20deliveries%20run%20today%3A%0A%0ACompany%3A%0AOrders%20per%20day%3A%0ADrivers%3A%0ABest%20time%20to%20talk%3A%0A">
+          Request a demo
+          <svg class="icon" width="14" height="14" aria-hidden="true"><use href="#i-arrow-right"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="site-footer__bottom">
+      <span>© <span data-year>2026</span> DeliTime. All rights reserved.</span>
+      <span>Designed and developed by
+        <a href="https://kaprera.com" target="_blank" rel="noreferrer">Kaprera</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script src="script.js" defer></script>
+</body>
+</html>

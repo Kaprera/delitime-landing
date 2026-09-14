@@ -1,0 +1,1474 @@
+/* ===========================================================================
+   DeliTime — public landing page.
+
+   This file is the whole design system for the marketing site. It is a plain
+   stylesheet on purpose: the page is static HTML on Netlify, with no build
+   step, so there is no Tailwind pass to expand utility classes here.
+
+   The tokens below are copied from the console's `globals.css` so a colour,
+   a radius, or a status pill on this page is the exact one the visitor meets
+   after signing in. When the console's palette changes, change it here too —
+   these two files are meant to agree.
+=========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Tokens — light.
+--------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+
+  --canvas: #f6f7f9;
+  --surface: #ffffff;
+  --line: #e6e8ec;
+  --line-strong: #d3d7de;
+
+  --ink: #101623;
+  --ink-soft: #414a59;
+  --ink-muted: #6b7482;
+  --ink-faint: #98a0ac;
+
+  --brand-50: #eefafb;
+  --brand-100: #d3f1f4;
+  --brand-200: #ade3ea;
+  --brand-300: #74cdda;
+  --brand-400: #37adc1;
+  --brand-500: #1b90a7;
+  --brand-600: #14738c;
+  --brand-700: #145d72;
+  --brand-800: #164c5e;
+  --brand-900: #164050;
+
+  --red-50: #fef2f2;
+  --red-600: #dc2626;
+  --red-700: #b91c1c;
+
+  --orange-50: #fff7ed;
+  --orange-600: #ea580c;
+  --orange-700: #c2410c;
+
+  --amber-50: #fffbeb;
+  --amber-400: #fbbf24;
+  --amber-600: #d97706;
+  --amber-800: #92400e;
+
+  --emerald-50: #ecfdf5;
+  --emerald-400: #34d399;
+  --emerald-500: #10b981;
+  --emerald-600: #059669;
+  --emerald-700: #047857;
+
+  --blue-50: #eff6ff;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+
+  --indigo-50: #eef2ff;
+  --indigo-600: #4f46e5;
+  --indigo-700: #4338ca;
+
+  --violet-50: #f5f3ff;
+  --violet-600: #7c3aed;
+  --violet-700: #6d28d9;
+
+  --slate-100: #f1f5f9;
+  --slate-400: #94a3b8;
+  --slate-600: #475569;
+
+  --scrollbar-thumb: #ccd1d9;
+  --scrollbar-thumb-hover: #b3b9c4;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --radius-card: 10px;
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(22 64 80 / 0.1), 0 4px 6px -4px rgb(22 64 80 / 0.1);
+
+  /* Ring colours carry their own alpha, so a tinted chip reads the same on
+     either palette without restating every border. */
+  --ring-line: var(--line);
+}
+
+/* ---------------------------------------------------------------------------
+   Tokens — dark.
+
+   Stated twice, exactly as the console states them: `[data-theme="dark"]` is
+   somebody who picked dark, and the `prefers-color-scheme` copy is somebody
+   who left the control on "system" and runs a dark desktop. CSS cannot put a
+   media query inside a selector list, so the two cannot share one rule.
+   Edit both copies together.
+--------------------------------------------------------------------------- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --canvas: #0c1017;
+  --surface: #141a24;
+  --line: #232c3a;
+  --line-strong: #37414f;
+
+  --ink: #e9edf3;
+  --ink-soft: #c3cad6;
+  --ink-muted: #939db0;
+  --ink-faint: #7c8798;
+
+  --red-50: #2a1315;
+  --red-600: #ff8085;
+  --red-700: #ff9ea1;
+
+  --orange-50: #2c1a0b;
+  --orange-600: #ffa057;
+  --orange-700: #ffb578;
+
+  --amber-50: #2b1f08;
+  --amber-400: #ffc148;
+  --amber-600: #ffc148;
+  --amber-800: #ffdc93;
+
+  --emerald-50: #082820;
+  --emerald-400: #4fd4a0;
+  --emerald-500: #10b981;
+  --emerald-600: #4fd4a0;
+  --emerald-700: #6fdfb2;
+
+  --blue-50: #0d2035;
+  --blue-600: #62b6ff;
+  --blue-700: #8ccaff;
+
+  --indigo-50: #171a3a;
+  --indigo-600: #98a5ff;
+  --indigo-700: #b3bcff;
+
+  --violet-50: #221546;
+  --violet-600: #b6a2fd;
+  --violet-700: #c9bafd;
+
+  --slate-100: #1e2531;
+  --slate-400: #7c8798;
+  --slate-600: #aab6c6;
+
+  --scrollbar-thumb: #333d4c;
+  --scrollbar-thumb-hover: #45505f;
+
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    color-scheme: dark;
+
+    --canvas: #0c1017;
+    --surface: #141a24;
+    --line: #232c3a;
+    --line-strong: #37414f;
+
+    --ink: #e9edf3;
+    --ink-soft: #c3cad6;
+    --ink-muted: #939db0;
+    --ink-faint: #7c8798;
+
+    --red-50: #2a1315;
+    --red-600: #ff8085;
+    --red-700: #ff9ea1;
+
+    --orange-50: #2c1a0b;
+    --orange-600: #ffa057;
+    --orange-700: #ffb578;
+
+    --amber-50: #2b1f08;
+    --amber-400: #ffc148;
+    --amber-600: #ffc148;
+    --amber-800: #ffdc93;
+
+    --emerald-50: #082820;
+    --emerald-400: #4fd4a0;
+    --emerald-500: #10b981;
+    --emerald-600: #4fd4a0;
+    --emerald-700: #6fdfb2;
+
+    --blue-50: #0d2035;
+    --blue-600: #62b6ff;
+    --blue-700: #8ccaff;
+
+    --indigo-50: #171a3a;
+    --indigo-600: #98a5ff;
+    --indigo-700: #b3bcff;
+
+    --violet-50: #221546;
+    --violet-600: #b6a2fd;
+    --violet-700: #c9bafd;
+
+    --slate-100: #1e2531;
+    --slate-400: #7c8798;
+    --slate-600: #aab6c6;
+
+    --scrollbar-thumb: #333d4c;
+    --scrollbar-thumb-hover: #45505f;
+
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  }
+}
+
+/* The brand hue is the one scale that is NOT re-pointed for dark, because it
+   is the identity colour — so the few places that need a dark-mode brand tint
+   ask for it explicitly through these two. */
+:root {
+  --brand-tint: var(--brand-50);
+  --brand-tint-ink: var(--brand-700);
+}
+:root[data-theme="dark"] {
+  --brand-tint: rgb(22 64 80 / 0.5);
+  --brand-tint-ink: var(--brand-300);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    --brand-tint: rgb(22 64 80 / 0.5);
+    --brand-tint-ink: var(--brand-300);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+  /* The sticky header is 3.5rem; anchor targets stop below it. */
+  scroll-padding-top: 4.5rem;
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+svg {
+  display: block;
+  flex: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 1px;
+  border-radius: 6px;
+}
+
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  background-clip: content-box;
+}
+
+/* The icon sprite at the top of the document: definitions only, never drawn.
+   Taken out of flow so it cannot contribute a stray line box. */
+.icon-sprite {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   Icons.
+
+   Every icon is a <use> pointing at the sprite at the top of the document.
+   `stroke`, `fill` and the stroke-* properties are inherited, so setting them
+   on the referencing <svg> reaches the symbol's shapes — which is what lets
+   one sprite entry be drawn in a dozen sizes and colours.
+--------------------------------------------------------------------------- */
+.icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Tabular figures keep the invented money columns aligned, same as the console. */
+.numeric {
+  font-variant-numeric: tabular-nums;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Motion
+--------------------------------------------------------------------------- */
+@keyframes dt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: dt-rise 0.28s var(--ease-out-soft) both;
+}
+
+.stagger > * {
+  animation: dt-rise 0.32s var(--ease-out-soft) both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0ms; }
+.stagger > *:nth-child(2) { animation-delay: 24ms; }
+.stagger > *:nth-child(3) { animation-delay: 48ms; }
+.stagger > *:nth-child(4) { animation-delay: 72ms; }
+.stagger > *:nth-child(5) { animation-delay: 96ms; }
+.stagger > *:nth-child(6) { animation-delay: 120ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Layout
+--------------------------------------------------------------------------- */
+.wrap {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+.section-title {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.section-lede {
+  margin-top: 0.5rem;
+  max-width: 36rem;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--ink-muted);
+}
+
+/* A small uppercase label: "Intake", "One order, every state it can reach". */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---------------------------------------------------------------------------
+   Buttons
+--------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.75rem;
+  padding-inline: 1.25rem;
+  border: 0;
+  border-radius: 0.5rem;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.btn--sm {
+  height: 2rem;
+  padding-inline: 0.875rem;
+  font-size: 13px;
+}
+
+.btn--primary {
+  background: var(--brand-600);
+  color: #fff;
+  box-shadow: var(--shadow-xs);
+}
+.btn--primary:hover { background: var(--brand-700); }
+.btn--primary:active { background: var(--brand-800); }
+
+.btn--secondary {
+  background: var(--surface);
+  color: var(--ink-soft);
+  border: 1px solid var(--line-strong);
+  box-shadow: var(--shadow-xs);
+}
+.btn--secondary:hover {
+  background: var(--canvas);
+  color: var(--ink);
+}
+
+/* Inverted, for the brand-coloured closing panel and the footer. */
+.btn--white {
+  background: #fff;
+  color: var(--brand-700);
+  box-shadow: var(--shadow-xs);
+}
+.btn--white:hover { background: var(--brand-50); }
+.btn--white:active { background: var(--brand-100); }
+
+.btn--outline-white {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgb(255 255 255 / 0.25);
+}
+.btn--outline-white:hover { background: rgb(255 255 255 / 0.1); }
+
+/* ---------------------------------------------------------------------------
+   Badges — the console's status pills, rendered exactly as `Badge` renders
+   them, so a pill here is the pill the visitor meets after signing in.
+--------------------------------------------------------------------------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: inset 0 0 0 1px var(--badge-ring, transparent);
+  background: var(--badge-bg);
+  color: var(--badge-ink);
+}
+
+.badge__dot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+.tone-blue    { --badge-bg: var(--blue-50);    --badge-ink: var(--blue-700);    --badge-ring: rgb(37 99 235 / 0.15); }
+.tone-indigo  { --badge-bg: var(--indigo-50);  --badge-ink: var(--indigo-700);  --badge-ring: rgb(79 70 229 / 0.15); }
+.tone-amber   { --badge-bg: var(--amber-50);   --badge-ink: var(--amber-800);   --badge-ring: rgb(217 119 6 / 0.2); }
+.tone-green   { --badge-bg: var(--emerald-50); --badge-ink: var(--emerald-700); --badge-ring: rgb(5 150 105 / 0.15); }
+.tone-red     { --badge-bg: var(--red-50);     --badge-ink: var(--red-700);     --badge-ring: rgb(220 38 38 / 0.15); }
+.tone-orange  { --badge-bg: var(--orange-50);  --badge-ink: var(--orange-700);  --badge-ring: rgb(234 88 12 / 0.15); }
+.tone-gray    { --badge-bg: var(--slate-100);  --badge-ink: var(--slate-600);   --badge-ring: rgb(100 116 139 / 0.15); }
+.tone-violet  { --badge-bg: var(--violet-50);  --badge-ink: var(--violet-700);  --badge-ring: rgb(124 58 237 / 0.15); }
+.tone-emerald { --badge-bg: var(--emerald-50); --badge-ink: var(--emerald-700); --badge-ring: rgb(5 150 105 / 0.15); }
+/* Brand is the one hue not re-pointed for dark, so it names its own tint. */
+.tone-teal    { --badge-bg: var(--brand-tint); --badge-ink: var(--brand-tint-ink); --badge-ring: rgb(20 115 140 / 0.15); }
+
+/* ---------------------------------------------------------------------------
+   Icon chips — a tinted square holding one icon, reused by the feature cards,
+   the numbered flow steps, and the dashboard stat tiles.
+--------------------------------------------------------------------------- */
+.chip {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.375rem;
+  background: var(--badge-bg);
+  color: var(--badge-ink);
+  box-shadow: inset 0 0 0 1px var(--badge-ring, transparent);
+}
+
+.chip--sm {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.chip--round {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------------
+   Theme toggle.
+
+   Which segment reads as active is decided by `data-theme` on <html>, not by
+   script state — so the control is correct on the very first paint, before
+   script.js has run a single line.
+--------------------------------------------------------------------------- */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.125rem;
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--line) 50%, transparent);
+  color: var(--ink-muted);
+}
+
+.theme-toggle__btn {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.theme-toggle__btn:hover {
+  color: var(--ink);
+}
+
+:root[data-theme="system"] .theme-toggle__btn[value="system"],
+:root[data-theme="light"] .theme-toggle__btn[value="light"],
+:root[data-theme="dark"] .theme-toggle__btn[value="dark"] {
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow-xs);
+}
+
+/* ---------------------------------------------------------------------------
+   Screen mockups.
+
+   A browser window drawn in CSS, holding one invented console screen. The
+   frames carry made-up order data, so each is `aria-hidden` in the markup —
+   the prose beside them is what a screen reader should read.
+--------------------------------------------------------------------------- */
+.mock {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  user-select: none;
+}
+
+.mock__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--canvas);
+}
+
+.mock__dots {
+  display: flex;
+  gap: 0.375rem;
+}
+
+.mock__dots span {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+}
+.mock__dots span:nth-child(1) { background: #f87171; }
+.mock__dots span:nth-child(2) { background: var(--amber-400); }
+.mock__dots span:nth-child(3) { background: var(--emerald-400); }
+
+.mock__url {
+  flex: 1;
+  min-width: 0;
+  margin-left: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 10px;
+  color: var(--ink-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mock__body {
+  padding: 0.875rem;
+}
+
+.mock__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mock__title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.mock__count {
+  padding: 0.125rem 0.375rem;
+  border-radius: 9999px;
+  background: var(--brand-tint);
+  color: var(--brand-tint-ink);
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.mock__step {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--ink-faint);
+}
+
+.mock__ref {
+  font-size: 10px;
+  color: var(--ink-faint);
+}
+
+/* Pushes whatever follows it to the right-hand end of a mock header. */
+.mock__push {
+  margin-left: auto;
+}
+
+.mock__chips {
+  margin-left: auto;
+  display: none;
+  gap: 0.25rem;
+}
+
+@media (min-width: 640px) {
+  .mock__chips { display: flex; }
+}
+
+.mock__chip {
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.375rem;
+  background: var(--canvas);
+  color: var(--ink-muted);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 10px;
+}
+
+.mock__chip--on {
+  background: var(--brand-600);
+  color: #fff;
+  box-shadow: none;
+}
+
+/* --- the orders queue ------------------------------------------------------ */
+.queue {
+  margin-top: 0.75rem;
+  overflow: hidden;
+  border-radius: 0.375rem;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.queue__head,
+.queue__row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 0.625rem;
+}
+
+.queue__head {
+  padding-block: 0.375rem;
+  background: var(--canvas);
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.queue__row {
+  padding-block: 0.5rem;
+  border-top: 1px solid var(--line);
+  font-size: 10.5px;
+}
+
+.queue__id     { width: 2.75rem; font-weight: 500; color: var(--ink); }
+.queue__area   { flex: 1; min-width: 0; color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.queue__driver { display: none; width: 4rem; color: var(--ink-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.queue__status { width: 5rem; }
+.queue__total  { width: 3rem; text-align: right; font-weight: 500; color: var(--ink); }
+
+@media (min-width: 640px) {
+  .queue__driver { display: block; }
+}
+
+/* --- the intake form ------------------------------------------------------- */
+.fields {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.field__label {
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.field__value {
+  margin-top: 0.25rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 10.5px;
+  color: var(--ink-soft);
+}
+
+/* A button drawn inside a mockup — it is a picture of a control, not one. */
+.mock__actions {
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.mock__btn {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  height: 1.75rem;
+  border-radius: 0.375rem;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.mock__btn--send { background: var(--emerald-500); }
+.mock__btn--assign { background: var(--brand-600); }
+
+.mock__note {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  height: 1.75rem;
+  padding-inline: 0.5rem;
+  border-radius: 0.375rem;
+  background: var(--emerald-50);
+  color: var(--emerald-700);
+  box-shadow: inset 0 0 0 1px rgb(5 150 105 / 0.15);
+  font-size: 10px;
+  font-weight: 500;
+}
+
+/* --- the driver list ------------------------------------------------------- */
+.drivers {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.375rem;
+}
+
+.driver {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+/* The one the console would pick. */
+.driver--picked {
+  background: var(--brand-tint);
+  box-shadow: inset 0 0 0 1px rgb(20 115 140 / 0.25);
+}
+
+.driver__avatar {
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  background: var(--slate-100);
+  color: var(--slate-600);
+  font-size: 9.5px;
+  font-weight: 600;
+}
+
+.driver--picked .driver__avatar {
+  background: var(--brand-600);
+  color: #fff;
+}
+
+.driver__who {
+  flex: 1;
+  min-width: 0;
+}
+
+.driver__name {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.driver__meta {
+  display: block;
+  font-size: 9.5px;
+  color: var(--ink-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* --- the dashboard --------------------------------------------------------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.stat {
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  background: var(--badge-bg);
+  color: var(--badge-ink);
+  box-shadow: inset 0 0 0 1px var(--badge-ring, transparent);
+}
+
+.stat__label {
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.stat__value {
+  margin-top: 0.125rem;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.panel {
+  margin-top: 0.75rem;
+  padding: 0.625rem;
+  border-radius: 0.375rem;
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.panel__label {
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.chart {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.375rem;
+  height: 4rem;
+}
+
+.chart span {
+  flex: 1;
+  border-radius: 3px 3px 0 0;
+  background: var(--brand-300);
+}
+
+.chart span.is-peak {
+  background: var(--brand-500);
+}
+
+/* Seven days of order volume, as a share of the tallest bar. */
+.chart span:nth-child(1) { height: 52%; }
+.chart span:nth-child(2) { height: 68%; }
+.chart span:nth-child(3) { height: 44%; }
+.chart span:nth-child(4) { height: 81%; }
+.chart span:nth-child(5) { height: 60%; }
+.chart span:nth-child(6) { height: 95%; }
+.chart span:nth-child(7) { height: 73%; }
+
+.file {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.375rem;
+  background: var(--canvas);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.file__name {
+  flex: 1;
+  min-width: 0;
+  font-size: 10.5px;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file__tag {
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.375rem;
+  background: var(--slate-100);
+  color: var(--slate-600);
+  font-size: 9.5px;
+  font-weight: 500;
+}
+
+/* ---------------------------------------------------------------------------
+   Header
+--------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--canvas) 85%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.site-header .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 3.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.brand__mark {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9px;
+  background: var(--brand-600);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: var(--shadow-xs);
+}
+
+.brand__name {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.nav {
+  display: none;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.nav a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  transition: color 0.15s;
+}
+
+.nav a:hover {
+  color: var(--brand-600);
+}
+
+@media (min-width: 768px) {
+  .nav { display: flex; }
+}
+
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.signin {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-muted);
+  transition: color 0.15s;
+}
+
+.signin:hover {
+  color: var(--ink);
+}
+
+/* The header's demo button is the one thing that goes at narrow widths — the
+   hero repeats it two screens down, so nothing is lost. */
+.site-header .btn {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .site-header .btn { display: inline-flex; }
+}
+
+/* ---------------------------------------------------------------------------
+   Hero
+--------------------------------------------------------------------------- */
+.hero {
+  border-bottom: 1px solid var(--line);
+}
+
+.hero .wrap {
+  display: grid;
+  align-items: center;
+  gap: 3rem;
+  padding-block: 5rem;
+}
+
+@media (min-width: 640px) {
+  .hero .wrap { padding-block: 6rem; }
+}
+
+@media (min-width: 1024px) {
+  .hero .wrap {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+  }
+}
+
+.hero__copy {
+  min-width: 0;
+}
+
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.625rem;
+  border-radius: 9999px;
+  background: var(--brand-tint);
+  color: var(--brand-tint-ink);
+  box-shadow: inset 0 0 0 1px rgb(20 115 140 / 0.15);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hero__title {
+  margin-top: 1rem;
+  max-width: 42rem;
+  font-size: 2.25rem;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.hero__title em {
+  font-style: normal;
+  color: var(--brand-600);
+}
+
+@media (min-width: 640px) {
+  .hero__title { font-size: 3rem; }
+}
+
+.hero__lede {
+  margin-top: 1.25rem;
+  max-width: 36rem;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+.hero__actions {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hero__points {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
+
+.hero__points li {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.ink-emerald { color: var(--emerald-600); }
+.ink-blue    { color: var(--blue-600); }
+.ink-violet  { color: var(--violet-600); }
+
+/* ---------------------------------------------------------------------------
+   Lifecycle strip — one order, every state it can reach.
+--------------------------------------------------------------------------- */
+.lifecycle {
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.lifecycle .wrap {
+  padding-block: 2rem;
+}
+
+.lifecycle__list {
+  margin-top: 0.875rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lifecycle__list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lifecycle__sep {
+  color: color-mix(in srgb, var(--ink-faint) 60%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+   Flows — each step beside the screen it happens on.
+--------------------------------------------------------------------------- */
+.flows {
+  padding-block: 5rem;
+}
+
+.flows__list {
+  margin-top: 3rem;
+  display: grid;
+  gap: 4rem;
+}
+
+.flow {
+  display: grid;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .flow {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3.5rem;
+  }
+  /* Alternate which side the screen sits on, so the eye zig-zags down the
+     page rather than running down one rail. */
+  .flow:nth-child(even) > .flow__copy { order: 2; }
+  .flow:nth-child(even) > .flow__screen { order: 1; }
+}
+
+.flow__copy,
+.flow__screen {
+  min-width: 0;
+}
+
+.flow__step {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.flow__title {
+  margin-top: 1rem;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.flow__body {
+  margin-top: 0.75rem;
+  max-width: 28rem;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+.flow__points {
+  margin-top: 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.flow__points li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Features
+--------------------------------------------------------------------------- */
+.features {
+  border-block: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.features .wrap {
+  padding-block: 4rem;
+}
+
+.features__grid {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .features__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .features__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.feature {
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--canvas);
+  box-shadow: var(--shadow-xs);
+  transition: border-color 0.15s;
+}
+
+.feature:hover {
+  border-color: var(--line-strong);
+}
+
+.feature__title {
+  margin-top: 0.875rem;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.feature__body {
+  margin-top: 0.375rem;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--ink-muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Closing call to action
+--------------------------------------------------------------------------- */
+.closing {
+  padding-block: 5rem;
+}
+
+.closing__panel {
+  padding: 3rem 2rem;
+  border-radius: var(--radius-card);
+  background: var(--brand-800);
+  text-align: center;
+}
+
+.closing__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.closing__lede {
+  margin: 0.75rem auto 0;
+  max-width: 28rem;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--brand-100);
+}
+
+.closing__actions {
+  margin-top: 1.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.closing__fineprint {
+  margin-top: 1rem;
+  font-size: 11.5px;
+  color: var(--brand-300);
+}
+
+/* ---------------------------------------------------------------------------
+   Footer — the band spans the viewport, and so does its grid.
+--------------------------------------------------------------------------- */
+.site-footer {
+  width: 100%;
+  background: var(--brand-900);
+  color: var(--brand-100);
+}
+
+.site-footer__inner {
+  width: 100%;
+  padding: 3.5rem 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .site-footer__inner { padding-inline: 2.5rem; }
+}
+
+@media (min-width: 1024px) {
+  .site-footer__inner { padding-inline: 3.5rem; }
+}
+
+.site-footer__grid {
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .site-footer__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .site-footer__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .site-footer__about { max-width: 20rem; }
+}
+
+.site-footer .brand__name {
+  color: #fff;
+}
+
+.site-footer__about p {
+  margin-top: 1rem;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--brand-200);
+}
+
+.site-footer h2 {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--brand-300);
+}
+
+.site-footer__links {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.625rem;
+  font-size: 12.5px;
+}
+
+.site-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: color 0.15s;
+}
+
+.site-footer__links a:hover {
+  color: #fff;
+}
+
+.site-footer__links svg {
+  color: var(--brand-400);
+}
+
+.site-footer__start p {
+  margin-top: 1rem;
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--brand-200);
+}
+
+.site-footer__start .btn {
+  margin-top: 1rem;
+  height: 2.5rem;
+  padding-inline: 1rem;
+  font-size: 13px;
+  color: var(--brand-800);
+}
+
+.site-footer__bottom {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 12px;
+  color: var(--brand-300);
+}
+
+.site-footer__bottom a {
+  font-weight: 500;
+  color: #fff;
+  transition: color 0.15s;
+}
+
+.site-footer__bottom a:hover {
+  color: var(--brand-200);
+}

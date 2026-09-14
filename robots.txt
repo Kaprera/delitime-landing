@@ -1,0 +1,7 @@
+# The landing page is the public front door and should be indexed in full.
+# The console it links to lives on another host and gates itself behind a
+# session, so there is nothing to exclude here.
+User-agent: *
+Allow: /
+
+Sitemap: https://delitime.org/sitemap.xml

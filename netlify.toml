@@ -1,0 +1,60 @@
+# =============================================================================
+# DeliTime landing page — Netlify.
+#
+# There is no build: the site is the three files next to this one, so Netlify
+# publishes the directory as it stands. This repository holds the landing page
+# and nothing else, so the base directory is the repository root.
+# =============================================================================
+
+[build]
+  base = "."
+  publish = "."
+  # Nothing to compile. Stated explicitly so Netlify does not go looking for a
+  # framework to detect and try to build one that is not here.
+  command = ""
+
+[build.environment]
+  # Belt and braces against the same mistake: never auto-detect a framework.
+  NETLIFY_USE_YARN = "false"
+
+# -----------------------------------------------------------------------------
+# Security headers.
+#
+# These mirror the console's own (next.config.ts and src/proxy.ts) so the two
+# halves of the product are hardened the same way, minus the parts that only
+# make sense with a server: there is no session, no form post and no upload
+# here, so `form-action` and `connect-src` are simply closed.
+# -----------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+
+  [headers.values]
+    # The one inline script is the pre-paint theme read in <head>. It is pinned
+    # by hash rather than allowed with 'unsafe-inline', so this stays a real
+    # policy. IF YOU EDIT THAT SCRIPT, RECOMPUTE THE HASH — the browser will
+    # silently refuse to run it otherwise, and the page will flash white on a
+    # dark desktop. To recompute:
+    #   python3 -c "import re,hashlib,base64;h=open('index.html').read();\
+    #   b=re.search(r'<script>(.*?)</script>',h,re.S).group(1);\
+    #   print('sha256-'+base64.b64encode(hashlib.sha256(b.encode()).digest()).decode())"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-UNEB0XpiszPMN+tiRIDBk39Cv6xlWKNJmUiC6S9fuak='; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'; frame-ancestors 'none'; frame-src 'none'; upgrade-insecure-requests"
+
+    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), interest-cohort=(), payment=(), usb=()"
+    X-DNS-Prefetch-Control = "off"
+
+# The stylesheet and script are content-addressed by nothing, so they cannot be
+# cached forever — but a day is long enough to help a repeat visitor and short
+# enough that a copy fix is live the next morning.
+[[headers]]
+  for = "/styles.css"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
+
+[[headers]]
+  for = "/script.js"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, must-revalidate"
